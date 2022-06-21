@@ -4,9 +4,14 @@ CREATE TABLE IF NOT EXISTS MovieDatabase.movie(
     movieId int PRIMARY KEY,
     title text,
     genre text,
-    tag list<text>,
+    #topTags list<text>,
     productionYear int,
-    avg_rating double,
-    ratingsList list<double>,
-    ratingTimestamp list<timestamp>
+    avg_rating double
+);
+
+CREATE TABLE IF NOT EXISTS MovieDatabase.movieRatings(
+    movieId int PRIMARY KEY,
+    title text,
+    ratingList list<double>,
+    ratingTimestamps list<timestamp>
 );
