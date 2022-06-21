@@ -6,7 +6,7 @@ import datetime
 
 j=-1
 ratingslist = [] #Column 0 = userId, Column 1 = movieId, Column 2 = rating, Column 3 = timestamp
-with open('copy_rating.csv', 'r') as ratingcsv:
+with open('rating.csv', 'r') as ratingcsv:
     print("Start reading csv")
     startTime = time.time()
     csv_reader = csv.reader(ratingcsv,delimiter=',')
