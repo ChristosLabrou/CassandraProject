@@ -1,24 +1,23 @@
-CREATE KEYSPACE IF NOT EXISTS MovieDatabase WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : '1'};
+CREATE KEYSPACE IF NOT EXISTS movie_database WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : '1'};
 
-CREATE TABLE IF NOT EXISTS MovieDatabase.MovieFullDetails(
+CREATE TABLE IF NOT EXISTS movie_database.MovieFullDetails(
     movieId int PRIMARY KEY,
     title text,
     genre text,
-    #topTags list<text>,
     productionYear int,
-    avg_rating double
+    avgRating double
 );
 
-CREATE TABLE IF NOT EXISTS MovieDatabase.MovieRatings(
+CREATE TABLE IF NOT EXISTS movie_database.MovieRatings(
     movieId int PRIMARY KEY,
     title text,
     ratingList list<double>,
     ratingTimestamps list<timestamp>
 );
 
-CREATE TABLE IF NOT EXISTS MovieDatabase.MovieTags(
+CREATE TABLE IF NOT EXISTS movie_database.MovieTags(
     movieId int PRIMARY KEY,
     title text,
-    avg_rating double,
+    avgRating double,
     tags list<text>
-)
+);
