@@ -4,6 +4,7 @@ from sqlalchemy import false, null, true
 import AstraConnect
 
 #session = AstraConnect.AstraConnect()
+CSVPATH = '/home/chris/repos/CassandraProject/csv/'
 moviesList = [] #Column 0 is movieId, Column 1 is title, Column 2 is genres
 productionYear = []
 taintedTitles = [] #This list saves all the movies (via id) which do not have production year in their title
@@ -11,7 +12,7 @@ i=-1
 currentMovieIsSafe = true
 print("Reading movies csv.")
 startTime = time.time()
-with open('movie.csv', 'r') as moviecsv:
+with open(CSVPATH+'movie.csv', 'r') as moviecsv:
     csv_reader = csv.reader(moviecsv, delimiter=',')
     for row in csv_reader:
         #I want to skip first row because it contains column names. This is a stupid way to do it but it works
@@ -21,7 +22,10 @@ with open('movie.csv', 'r') as moviecsv:
         moviesList.append(row)
         row[1] = row[1].rstrip() #Trim whitespace
         #Note: We can't trim parenthesis yet because it messes with title/production year
-        productionYear.append(row[1].rsplit('(')[1])
+        if (row[1].find("(")!=-1):
+            productionYear.append(row[1].rsplit('(')[1])
+        else:
+            productionYear.append(null)
         try:
             #if the movie contais year in its name then set that number as year and remove it from title
             productionYear[i] = int(productionYear[i].rstrip(' -()'))
@@ -37,7 +41,7 @@ j=-1
 ratingslist = [] #Column 0 = userId, Column 1 = movieId, Column 2 = rating, Column 3 = timestamp
 print("Reading sorted csv")
 startTime = time.time()
-with open('sorted_rating.csv', 'r') as sortedcsv:
+with open(CSVPATH+'sorted_rating.csv', 'r') as sortedcsv:
     csv_reader = csv.reader(sortedcsv,delimiter=',')
     for row in csv_reader:
         if j==-1:
