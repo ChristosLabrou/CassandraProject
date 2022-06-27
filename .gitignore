@@ -1,4 +1,8 @@
 /pdf/*
 /pdf
 data-sample.xlsx
-GeneratedToken
+/csv
+/tokens
+/misc
+secure-connect*
+test.py
