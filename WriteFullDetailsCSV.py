@@ -1,18 +1,14 @@
 import csv
 import time
-from sqlalchemy import false, null, true
-import AstraConnect
+import GlobalVariables as GV
 
-#session = AstraConnect.AstraConnect()
-CSVPATH = '/home/chris/repos/CassandraProject/csv/'
 moviesList = [] #Column 0 is movieId, Column 1 is title, Column 2 is genres
 productionYear = []
 taintedTitles = [] #This list saves all the movies (via id) which do not have production year in their title
 i=-1
-currentMovieIsSafe = true
 print("Reading movies csv.")
 startTime = time.time()
-with open(CSVPATH+'movie.csv', 'r') as moviecsv:
+with open(GV.CSVPATH+'movie.csv', 'r') as moviecsv:
     csv_reader = csv.reader(moviecsv, delimiter=',')
     for row in csv_reader:
         #I want to skip first row because it contains column names. This is a stupid way to do it but it works
@@ -23,9 +19,11 @@ with open(CSVPATH+'movie.csv', 'r') as moviecsv:
         row[1] = row[1].rstrip() #Trim whitespace
         #Note: We can't trim parenthesis yet because it messes with title/production year
         if (row[1].find("(")!=-1):
-            productionYear.append(row[1].rsplit('(')[1])
+            productionYear.append(row[1].rsplit('(')[len(row[1].rsplit('('))-1])
+            #this black magik is needed because some titles contain parenthesis for alternative names
+            #eg Seven (aka Se7en) (1995)
         else:
-            productionYear.append(null)
+            productionYear.append('null')
         try:
             #if the movie contais year in its name then set that number as year and remove it from title
             productionYear[i] = int(productionYear[i].rstrip(' -()'))
@@ -33,15 +31,17 @@ with open(CSVPATH+'movie.csv', 'r') as moviecsv:
             moviesList[i][1] = moviesList[i][1][:size-6]
         except:
             #otherwise set year to null
-            productionYear[i] = null
+            #we use a string because normal null messes text output in csv
+            productionYear[i] = 'null'
         moviesList[i][1] = moviesList[i][1].rstrip()
         i=i+1
 print("Reading finished. Took %.2f seconds" %(round(time.time()-startTime,2)))
+
 j=-1
 ratingslist = [] #Column 0 = userId, Column 1 = movieId, Column 2 = rating, Column 3 = timestamp
 print("Reading sorted csv")
 startTime = time.time()
-with open(CSVPATH+'sorted_rating.csv', 'r') as sortedcsv:
+with open(GV.CSVPATH+'sorted_rating.csv', 'r') as sortedcsv:
     csv_reader = csv.reader(sortedcsv,delimiter=',')
     for row in csv_reader:
         if j==-1:
@@ -66,3 +66,12 @@ for x in range(1, len(ratingslist)):
         sum = float(ratingslist[x][2])
         count = 1
         tempMovieId = ratingslist[x][1]
+
+#combinedList = []
+print("Started writing")
+startTime = time.time()
+with open(GV.CSVPATH+'fulldetails.csv', 'w') as export:
+    writer = csv.writer(export)
+    for i in range(0, len(moviesList)):
+        writer.writerow([moviesList[i][0], moviesList[i][1], moviesList[i][2], productionYear[i]])
+print("Finished writing. Took %.2f seconds" %round(time.time()-startTime))
