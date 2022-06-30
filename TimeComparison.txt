@@ -1,0 +1,4 @@
+MOVIE FULL DETAILS
+Quorum time: 56.546248
+All time: 60.046217
+Two time: 55.468321

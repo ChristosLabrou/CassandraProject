@@ -20,15 +20,28 @@ def AstraConnect():
     print("Attempting to connect...")
     auth_provider = PlainTextAuthProvider(tokenData[0], tokenData[1])
 
-    profile = ExecutionProfile(
+    QuorumProfile = ExecutionProfile(
     retry_policy=DowngradingConsistencyRetryPolicy(),
     consistency_level=ConsistencyLevel.QUORUM,
     serial_consistency_level=ConsistencyLevel.SERIAL,
     request_timeout=15,
     row_factory=tuple_factory)
 
-    cluster = Cluster(auth_provider=auth_provider, cloud=cloud_config, connect_timeout=10000, execution_profiles={EXEC_PROFILE_DEFAULT:profile})
+    AllProfile = ExecutionProfile(
+    retry_policy=DowngradingConsistencyRetryPolicy(),
+    consistency_level=ConsistencyLevel.ALL,
+    serial_consistency_level=ConsistencyLevel.SERIAL,
+    request_timeout=15,
+    row_factory=tuple_factory)
+
+    OneProfile = ExecutionProfile(
+    retry_policy=DowngradingConsistencyRetryPolicy(),
+    consistency_level=ConsistencyLevel.TWO,
+    serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
+    request_timeout=15,
+    row_factory=tuple_factory)
+
+    cluster = Cluster(auth_provider=auth_provider, cloud=cloud_config, connect_timeout=10000, execution_profiles={EXEC_PROFILE_DEFAULT:OneProfile})
     session = cluster.connect()
     print("Connection established!!\nThis is where the fun begins")
-    session.execute('USE movie_database')
     return session

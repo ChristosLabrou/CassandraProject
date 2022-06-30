@@ -74,8 +74,7 @@ with open(GV.CSVPATH+'fulldetails.csv', 'w') as export:
         writer.writerow([moviesList[i][0], moviesList[i][1], moviesList[i][2], productionYear[i]])
 print("Finished writing. Took %.2f seconds" % (time.time()-startTime))
 
-startTime = time.time()
-with open (GV.CSVPATH+'avgRating', 'w') as export:
+with open (GV.CSVPATH+'avgRating.csv', 'w') as export:
     writer = csv.writer(export)
     for i in range(0, len(movieAvgRating)):
-        writer.writerow(movieAvgRating)
+        writer.writerow([movieAvgRating[i][0], movieAvgRating[i][1]])
