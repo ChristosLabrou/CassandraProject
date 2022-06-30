@@ -4,7 +4,6 @@ import GlobalVariables as GV
 
 moviesList = [] #Column 0 is movieId, Column 1 is title, Column 2 is genres
 productionYear = []
-taintedTitles = [] #This list saves all the movies (via id) which do not have production year in their title
 i=-1
 print("Reading movies csv.")
 startTime = time.time()
@@ -23,19 +22,18 @@ with open(GV.CSVPATH+'movie.csv', 'r') as moviecsv:
             #this black magik is needed because some titles contain parenthesis for alternative names
             #eg Seven (aka Se7en) (1995)
         else:
-            productionYear.append('null')
+            productionYear.append(None)
         try:
-            #if the movie contais year in its name then set that number as year and remove it from title
+            #if the movie contains the year in its name then set that number as year and remove it from title
             productionYear[i] = int(productionYear[i].rstrip(' -()'))
             size = len(moviesList[i][1])
             moviesList[i][1] = moviesList[i][1][:size-6]
         except:
             #otherwise set year to null
-            #we use a string because normal null messes text output in csv
-            productionYear[i] = 'null'
+            productionYear[i] = None
         moviesList[i][1] = moviesList[i][1].rstrip()
         i=i+1
-print("Reading finished. Took %.2f seconds" %(round(time.time()-startTime,2)))
+print("Reading finished. Took %.2f seconds" %(time.time()-startTime))
 
 j=-1
 ratingslist = [] #Column 0 = userId, Column 1 = movieId, Column 2 = rating, Column 3 = timestamp
@@ -74,4 +72,10 @@ with open(GV.CSVPATH+'fulldetails.csv', 'w') as export:
     writer = csv.writer(export)
     for i in range(0, len(moviesList)):
         writer.writerow([moviesList[i][0], moviesList[i][1], moviesList[i][2], productionYear[i]])
-print("Finished writing. Took %.2f seconds" %round(time.time()-startTime))
+print("Finished writing. Took %.2f seconds" % (time.time()-startTime))
+
+startTime = time.time()
+with open (GV.CSVPATH+'avgRating', 'w') as export:
+    writer = csv.writer(export)
+    for i in range(0, len(movieAvgRating)):
+        writer.writerow(movieAvgRating)

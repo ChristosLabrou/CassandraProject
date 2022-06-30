@@ -1,5 +1,8 @@
-from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster, ExecutionProfile, EXEC_PROFILE_DEFAULT
+from cassandra.policies import WhiteListRoundRobinPolicy, DowngradingConsistencyRetryPolicy
+from cassandra.query import tuple_factory
 from cassandra.auth import PlainTextAuthProvider
+from cassandra import ConsistencyLevel
 import csv
 import GlobalVariables as GV
 
@@ -16,7 +19,15 @@ def AstraConnect():
             tokenData=row.copy()
     print("Attempting to connect...")
     auth_provider = PlainTextAuthProvider(tokenData[0], tokenData[1])
-    cluster = Cluster(auth_provider=auth_provider, cloud=cloud_config, connect_timeout=10000)
+
+    profile = ExecutionProfile(
+    retry_policy=DowngradingConsistencyRetryPolicy(),
+    consistency_level=ConsistencyLevel.QUORUM,
+    serial_consistency_level=ConsistencyLevel.SERIAL,
+    request_timeout=15,
+    row_factory=tuple_factory)
+
+    cluster = Cluster(auth_provider=auth_provider, cloud=cloud_config, connect_timeout=10000, execution_profiles={EXEC_PROFILE_DEFAULT:profile})
     session = cluster.connect()
     print("Connection established!!\nThis is where the fun begins")
     session.execute('USE movie_database')

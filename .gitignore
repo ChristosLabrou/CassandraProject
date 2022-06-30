@@ -7,3 +7,5 @@ data-sample.xlsx
 secure-connect*
 test.py
 /__pycache__
+/__pycache__/*
+/.vscode
