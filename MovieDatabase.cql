@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS movie_database.MovieFullDetails(
     title text,
     genre text,
     productionYear int,
-    avgRating double
+    avgRating double,
+    mostCommonTags text
 );
 
 CREATE TABLE IF NOT EXISTS movie_database.MovieRatings(

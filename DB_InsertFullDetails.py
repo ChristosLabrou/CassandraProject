@@ -7,11 +7,13 @@ import cassandra
 from cassandra.query import SimpleStatement
 from cassandra.concurrent import execute_concurrent_with_args
 
-def InsertFullDetails():
+def InsertFullDetails(profile, truncate):
     movies = []
     avgRatings = []
-    session = AstraConnect.AstraConnect()
+    session = AstraConnect.AstraConnect(profile)
     session.execute('USE movie_database')
+    if (truncate):
+        session.execute('TRUNCATE moviefulldetails')
     with open(GV.CSVPATH+'fulldetails.csv', 'r') as input:
         csv_reader = csv.reader(input, delimiter=',')
         for row in csv_reader:
@@ -31,16 +33,39 @@ def InsertFullDetails():
             row[1] = temp
             avgRatings.append(row)
 
-    insertQuery = session.prepare('INSERT INTO moviefulldetails (movieId, title, genre, productionYear) VALUES (?, ?, ?, ?)')
+    mostCommonTags = []
+    IDs = []
+    with open(GV.CSVPATH+'mostCommonTags.csv', 'r') as input:
+        csv_reader = csv.reader(input, delimiter=',')
+        for row in csv_reader:
+            temp = int(row[0])
+            row.pop(0)
+            #row.append(temp)
+            #mostCommonTags.append(row)
+            #IDs.append(temp)
+            separator = '|'
+            separator = separator.join(row)
+            newList = [separator, temp]
+            mostCommonTags.append(newList)
+
+
+    
     print("Starting insertion")
     startTime = time.time()
-    execute_concurrent_with_args(session, insertQuery, movies, 90)
 
-    updateQuery = session.prepare('UPDATE moviefulldetails SET avgRating=? WHERE movieId=?')
-    execute_concurrent_with_args(session, updateQuery, avgRatings, 90)
+    insertQuery = session.prepare('INSERT INTO moviefulldetails (movieId, title, genre, productionYear) VALUES (?, ?, ?, ?)')
+    updateAvgRating = session.prepare('UPDATE moviefulldetails SET avgRating=? WHERE movieId=?')
+    updateTags = session.prepare('UPDATE moviefulldetails SET mostCommonTags=? WHERE movieId=?')
+    
+    execute_concurrent_with_args(session, insertQuery, movies, 90) 
+    execute_concurrent_with_args(session, updateTags, mostCommonTags, 90)  
+    execute_concurrent_with_args(session, updateAvgRating, avgRatings, 90)
+    
     endTime = time.time()
     #print("Quorum took %.2f seconds to finish" % (endTime - startTime))
     file = open("TimeComparison.txt", 'a')
-    file.write("One time: %f\n" % (endTime-startTime))
+    file.write(AstraConnect.ProfileToString(profile) + " time: %f\n" % (endTime-startTime))
     file.close()
-InsertFullDetails()
+InsertFullDetails(AstraConnect.QuorumProfile, True)
+InsertFullDetails(AstraConnect.AllProfile, True)
+InsertFullDetails(AstraConnect.TwoProfile, True)

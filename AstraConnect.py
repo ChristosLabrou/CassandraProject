@@ -6,7 +6,7 @@ from cassandra import ConsistencyLevel
 import csv
 import GlobalVariables as GV
 
-def AstraConnect():
+def AstraConnect(profile):
     cloud_config = {'secure_connect_bundle' : GV.MAINPATH+'secure-connect-cassandraproject.zip'}
     #tokenData #Column 0 is Client ID, Column 1 is Secret, Column 2 is Role, Column 3 is Role
     with open(GV.TOKENS+'GeneratedTokenAdmin', 'r') as tokencsv:
@@ -19,29 +19,39 @@ def AstraConnect():
             tokenData=row.copy()
     print("Attempting to connect...")
     auth_provider = PlainTextAuthProvider(tokenData[0], tokenData[1])
+    cluster = Cluster(auth_provider=auth_provider, cloud=cloud_config, connect_timeout=10000, execution_profiles={EXEC_PROFILE_DEFAULT:profile})
+    session = cluster.connect()
+    print("Connection established!!\nThis is where the fun begins")
+    return session
 
-    QuorumProfile = ExecutionProfile(
+def ProfileToString(profile):
+    reply = ''
+    if (profile == QuorumProfile):
+        reply = 'Quorum'
+    elif (profile == AllProfile):
+        reply = 'All'
+    elif (profile == TwoProfile):
+        reply = 'Two'
+    return reply
+
+
+QuorumProfile = ExecutionProfile(
     retry_policy=DowngradingConsistencyRetryPolicy(),
     consistency_level=ConsistencyLevel.QUORUM,
     serial_consistency_level=ConsistencyLevel.SERIAL,
     request_timeout=15,
     row_factory=tuple_factory)
 
-    AllProfile = ExecutionProfile(
+AllProfile = ExecutionProfile(
     retry_policy=DowngradingConsistencyRetryPolicy(),
     consistency_level=ConsistencyLevel.ALL,
     serial_consistency_level=ConsistencyLevel.SERIAL,
     request_timeout=15,
     row_factory=tuple_factory)
 
-    OneProfile = ExecutionProfile(
+TwoProfile = ExecutionProfile(
     retry_policy=DowngradingConsistencyRetryPolicy(),
     consistency_level=ConsistencyLevel.TWO,
     serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
     request_timeout=15,
     row_factory=tuple_factory)
-
-    cluster = Cluster(auth_provider=auth_provider, cloud=cloud_config, connect_timeout=10000, execution_profiles={EXEC_PROFILE_DEFAULT:OneProfile})
-    session = cluster.connect()
-    print("Connection established!!\nThis is where the fun begins")
-    return session
