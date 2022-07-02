@@ -65,6 +65,4 @@ def InsertFullDetails(profile, truncate):
     file = open("TimeComparison.txt", 'a')
     file.write(AstraConnect.ProfileToString(profile) + " time: %f\n" % (endTime-startTime))
     file.close()
-InsertFullDetails(AstraConnect.QuorumProfile, True)
-InsertFullDetails(AstraConnect.AllProfile, True)
-InsertFullDetails(AstraConnect.TwoProfile, True)
+    

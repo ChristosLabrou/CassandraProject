@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS movie_database.MovieFullDetails(
     productionYear int,
     avgRating double,
     mostCommonTags text,
-    PRIMARY KEY (movieId, title)
-)WITH CLUSTERING ORDER BY (title ASC);
+    PRIMARY KEY (movieId)
+);
 
 --Erotima 3
 CREATE TABLE IF NOT EXISTS movie_database.MovieGenreByYear(
