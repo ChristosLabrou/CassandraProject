@@ -62,7 +62,6 @@ def InsertFullDetails(profile, truncate):
     execute_concurrent_with_args(session, updateAvgRating, avgRatings, 90)
     
     endTime = time.time()
-    #print("Quorum took %.2f seconds to finish" % (endTime - startTime))
     file = open("TimeComparison.txt", 'a')
     file.write(AstraConnect.ProfileToString(profile) + " time: %f\n" % (endTime-startTime))
     file.close()
