@@ -20,7 +20,7 @@ def InsertFullDetails(profile, truncate):
             try:
                 row[3] = int(row[3])
             except:
-                row[3] = None
+                row[3] = 0.0
             movies.append(row)
     
     with open(GV.CSVPATH+'avgRating.csv', 'r') as input:
