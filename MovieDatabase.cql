@@ -7,17 +7,17 @@ CREATE TABLE IF NOT EXISTS movie_database.MovieRatings(
     title text,
     rating double,
     ratingTimestamp timestamp,
-    PRIMARY KEY (movieId, userId, ratingTimestamp)
-)WITH CLUSTERING ORDER BY (userId ASC, ratingTimestamp ASC);
+    PRIMARY KEY ((movieId), ratingTimestamp, userId)
+)WITH CLUSTERING ORDER BY (ratingTimestamp ASC, userId ASC);
 
 --Erotima 2
 CREATE TABLE IF NOT EXISTS movie_database.MovieFullDetails(
     movieId int,
     title text,
-    genre text,
+    genre list<text>,
     productionYear int,
     avgRating double,
-    mostCommonTags text,
+    mostCommonTags list<text>,
     PRIMARY KEY (movieId)
 );
 
@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS movie_database.MovieFullDetails(
 CREATE TABLE IF NOT EXISTS movie_database.MovieGenreByYear(
     movieId int,
     title text,
-    genre text,
+    genre list<text>,
     productionYear int,
-    PRIMARY KEY (genre, productionYear)
-)WITH CLUSTERING ORDER BY (productionYear ASC);
+    PRIMARY KEY ((productionYear), title)
+);
 
 --Erotima 4
 CREATE TABLE IF NOT EXISTS movie_database.MovieTitle(
@@ -42,6 +42,14 @@ CREATE TABLE IF NOT EXISTS movie_database.MovieTags(
     movieId int,
     title text,
     avgRating double,
-    tags text,
+    tags list<text>,
     PRIMARY KEY(movieId, avgRating)
 )WITH CLUSTERING ORDER BY (avgRating DESC);
+
+CREATE TABLE IF NOT EXISTS movie_database.TempMovieTags(
+    movieId int,
+    title text,
+    avgRating double,
+    tags list<text>,
+    PRIMARY KEY(movieId)
+);
