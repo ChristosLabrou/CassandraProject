@@ -2,9 +2,6 @@ import csv
 import AstraConnect
 import GlobalVariables as GV
 import time
-from cassandra import ConsistencyLevel
-import cassandra
-from cassandra.query import SimpleStatement
 from cassandra.concurrent import execute_concurrent_with_args
 
 def InsertFullDetails(profile, truncate):
@@ -40,8 +37,6 @@ def InsertFullDetails(profile, truncate):
         for row in csv_reader:
             temp = int(row[0])
             row.pop(0)
-            #separator = '|'
-            #separator = separator.join(row)
             newList = [row, temp]
             mostCommonTags.append(newList)
 

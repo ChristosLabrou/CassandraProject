@@ -2,11 +2,7 @@ import csv
 import AstraConnect
 import GlobalVariables as GV
 import time
-from cassandra import ConsistencyLevel
-import cassandra
-from cassandra.query import SimpleStatement
 from cassandra.concurrent import execute_concurrent_with_args
-from operator import itemgetter
 
 def InsertTags(profile, truncate):
     startTime = time.time()
@@ -32,7 +28,6 @@ def InsertTags(profile, truncate):
 
 #This function was used once. TempMovieTags was a placeholder to help me insert data in MovieTags table with proper keys
 def InsertTempTags(profile, truncate):
-    movieTags = []
     session = AstraConnect.AstraConnect(profile)
     session.execute('USE movie_database')
     if(truncate):
@@ -57,10 +52,8 @@ def InsertTempTags(profile, truncate):
     with open(GV.CSVPATH+'movieAllTags.csv', 'r') as input:
         csv_reader = csv.reader(input, delimiter=',')
         for row in csv_reader:
-            #separator = ' | '
             IDs.append(int(row[0]))
             row.pop(0)
-            #separator = separator.join(row)
             tags.append(row)
             tagsListToBeInserted.append([tags[len(tags)-1], IDs[len(IDs)-1]])
     

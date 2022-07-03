@@ -2,9 +2,6 @@ import csv
 import AstraConnect
 import GlobalVariables as GV
 import time
-from cassandra import ConsistencyLevel
-import cassandra
-from cassandra.query import SimpleStatement
 from cassandra.concurrent import execute_concurrent_with_args
 
 def InsertTitle(profile, truncate):
