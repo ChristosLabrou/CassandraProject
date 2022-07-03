@@ -7,7 +7,7 @@ import AstraConnect
 
 i = 1
 file = open("TimeComparison.txt", 'a')
-file.write("\nErotima %d\n"%i)
+file.write("Erotima %d\n"%i)
 file.close()
 i = i+1
 #Erotima 1
