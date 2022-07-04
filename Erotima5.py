@@ -3,6 +3,7 @@ import AstraConnect
 import GlobalVariables as GV
 import time
 from cassandra.concurrent import execute_concurrent_with_args
+from operator import itemgetter
 
 def InsertTags(profile, truncate):
     startTime = time.time()
@@ -62,3 +63,27 @@ def InsertTempTags(profile, truncate):
 
     execute_concurrent_with_args(session, insertPrimaryKey, detailsList, 90)
     execute_concurrent_with_args(session, updateTags, tagsListToBeInserted, 90)
+
+def SelectTags(profile, tag):
+    session = AstraConnect.AstraConnect(profile)
+    query = session.prepare("SELECT title, avgRating FROM movie_database.MovieTags WHERE tags CONTAINS ? ALLOW FILTERING")
+    startTime = time.time()
+    results = []
+
+    results.append(session.execute(query, (tag,)))
+    exportedList = []
+    for row in results:
+        for element in row:
+            exportedList.append([element[0], element[1]])
+    exportedList.sort(key=itemgetter(1),reverse=True)
+    while(len(exportedList)>20):
+        exportedList.pop()
+    duration = time.time() - startTime
+    file = open("Erotima5output.txt", 'a')
+    for i in range(0,5):
+        file.write(exportedList[i][0]+"\n")
+    file.close()
+    file = open("Erotima5.txt", 'a')
+    file.write(f"{duration}\n")
+    file.close()
+

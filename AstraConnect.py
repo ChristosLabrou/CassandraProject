@@ -32,6 +32,8 @@ def ProfileToString(profile):
         reply = 'All'
     elif (profile == TwoProfile):
         reply = 'Two'
+    elif (profile == OneProfile):
+        reply = 'One'
     return reply
 
 
@@ -52,6 +54,13 @@ AllProfile = ExecutionProfile(
 TwoProfile = ExecutionProfile(
     retry_policy=DowngradingConsistencyRetryPolicy(),
     consistency_level=ConsistencyLevel.TWO,
+    serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
+    request_timeout=15,
+    row_factory=tuple_factory)
+
+OneProfile = ExecutionProfile(
+    retry_policy=DowngradingConsistencyRetryPolicy(),
+    consistency_level=ConsistencyLevel.ONE,
     serial_consistency_level=ConsistencyLevel.LOCAL_SERIAL,
     request_timeout=15,
     row_factory=tuple_factory)

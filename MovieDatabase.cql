@@ -4,7 +4,7 @@ CREATE KEYSPACE IF NOT EXISTS movie_database WITH REPLICATION = {'class' : 'Simp
 CREATE TABLE IF NOT EXISTS movie_database.MovieRatings(
     userId int,
     movieId int,
-    title text,
+    title text STATIC,
     rating double,
     ratingTimestamp timestamp,
     PRIMARY KEY ((movieId), ratingTimestamp, userId)
